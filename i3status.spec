@@ -4,7 +4,7 @@
 #
 Name     : i3status
 Version  : 2.11
-Release  : 1
+Release  : 2
 URL      : https://i3wm.org/i3status/i3status-2.11.tar.bz2
 Source0  : https://i3wm.org/i3status/i3status-2.11.tar.bz2
 Summary  : No detailed summary available
@@ -12,8 +12,8 @@ Group    : Development/Tools
 License  : BSD-3-Clause
 Requires: i3status-bin
 Requires: i3status-doc
-BuildRequires : alsa-lib-dev
 BuildRequires : libnl-dev
+BuildRequires : pkgconfig(alsa)
 BuildRequires : pkgconfig(libconfuse)
 BuildRequires : pkgconfig(libpulse)
 BuildRequires : yajl-dev
@@ -52,11 +52,11 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1525286103
+export SOURCE_DATE_EPOCH=1525286212
 make  %{?_smp_mflags}
 
 %install
-export SOURCE_DATE_EPOCH=1525286103
+export SOURCE_DATE_EPOCH=1525286212
 rm -rf %{buildroot}
 %make_install
 
