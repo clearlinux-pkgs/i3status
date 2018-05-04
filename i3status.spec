@@ -4,7 +4,7 @@
 #
 Name     : i3status
 Version  : 2.11
-Release  : 2
+Release  : 3
 URL      : https://i3wm.org/i3status/i3status-2.11.tar.bz2
 Source0  : https://i3wm.org/i3status/i3status-2.11.tar.bz2
 Summary  : No detailed summary available
@@ -12,6 +12,7 @@ Group    : Development/Tools
 License  : BSD-3-Clause
 Requires: i3status-bin
 Requires: i3status-doc
+Requires: i3status-data
 BuildRequires : libnl-dev
 BuildRequires : pkgconfig(alsa)
 BuildRequires : pkgconfig(libconfuse)
@@ -31,9 +32,18 @@ your CPU as much as spawning the corresponding amount of shell commands would.
 %package bin
 Summary: bin components for the i3status package.
 Group: Binaries
+Requires: i3status-data
 
 %description bin
 bin components for the i3status package.
+
+
+%package data
+Summary: data components for the i3status package.
+Group: Data
+
+%description data
+data components for the i3status package.
 
 
 %package doc
@@ -52,13 +62,17 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1525286212
+export SOURCE_DATE_EPOCH=1525466430
 make  %{?_smp_mflags}
 
 %install
-export SOURCE_DATE_EPOCH=1525286212
+export SOURCE_DATE_EPOCH=1525466430
 rm -rf %{buildroot}
 %make_install
+## make_install_append content
+install -d -m 755 %{buildroot}/usr/share/xdg/i3status
+install -m 644 i3status.conf %{buildroot}/usr/share/xdg/i3status/config
+## make_install_append end
 
 %files
 %defattr(-,root,root,-)
@@ -66,6 +80,10 @@ rm -rf %{buildroot}
 %files bin
 %defattr(-,root,root,-)
 /usr/bin/i3status
+
+%files data
+%defattr(-,root,root,-)
+/usr/share/xdg/i3status/config
 
 %files doc
 %defattr(-,root,root,-)
