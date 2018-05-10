@@ -4,7 +4,7 @@
 #
 Name     : i3status
 Version  : 2.11
-Release  : 3
+Release  : 4
 URL      : https://i3wm.org/i3status/i3status-2.11.tar.bz2
 Source0  : https://i3wm.org/i3status/i3status-2.11.tar.bz2
 Summary  : No detailed summary available
