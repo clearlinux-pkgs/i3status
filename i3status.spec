@@ -6,7 +6,7 @@
 #
 Name     : i3status
 Version  : 2.12
-Release  : 5
+Release  : 6
 URL      : https://i3wm.org/i3status/i3status-2.12.tar.bz2
 Source0  : https://i3wm.org/i3status/i3status-2.12.tar.bz2
 Source99 : https://i3wm.org/i3status/i3status-2.12.tar.bz2.asc
