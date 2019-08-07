@@ -5,21 +5,25 @@
 # Source0 file verified with key 0x4E7160ED4AC8EE1D (michael@stapelberg.de)
 #
 Name     : i3status
-Version  : 2.12
-Release  : 6
-URL      : https://i3wm.org/i3status/i3status-2.12.tar.bz2
-Source0  : https://i3wm.org/i3status/i3status-2.12.tar.bz2
-Source99 : https://i3wm.org/i3status/i3status-2.12.tar.bz2.asc
+Version  : 2.13
+Release  : 7
+URL      : https://i3wm.org/i3status/i3status-2.13.tar.bz2
+Source0  : https://i3wm.org/i3status/i3status-2.13.tar.bz2
+Source1 : https://i3wm.org/i3status/i3status-2.13.tar.bz2.asc
 Summary  : No detailed summary available
 Group    : Development/Tools
 License  : BSD-3-Clause
-Requires: i3status-bin
-Requires: i3status-man
-Requires: i3status-data
+Requires: i3status-bin = %{version}-%{release}
+Requires: i3status-data = %{version}-%{release}
+Requires: i3status-license = %{version}-%{release}
+Requires: i3status-man = %{version}-%{release}
+BuildRequires : asciidoc
 BuildRequires : libnl-dev
 BuildRequires : pkgconfig(alsa)
 BuildRequires : pkgconfig(libconfuse)
+BuildRequires : pkgconfig(libnl-genl-3.0)
 BuildRequires : pkgconfig(libpulse)
+BuildRequires : xmlto
 BuildRequires : yajl-dev
 
 %description
@@ -35,8 +39,8 @@ spawning the corresponding amount of shell commands would.
 %package bin
 Summary: bin components for the i3status package.
 Group: Binaries
-Requires: i3status-data
-Requires: i3status-man
+Requires: i3status-data = %{version}-%{release}
+Requires: i3status-license = %{version}-%{release}
 
 %description bin
 bin components for the i3status package.
@@ -50,6 +54,14 @@ Group: Data
 data components for the i3status package.
 
 
+%package license
+Summary: license components for the i3status package.
+Group: Default
+
+%description license
+license components for the i3status package.
+
+
 %package man
 Summary: man components for the i3status package.
 Group: Default
@@ -59,24 +71,42 @@ man components for the i3status package.
 
 
 %prep
-%setup -q -n i3status-2.12
+%setup -q -n i3status-2.13
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-export LANG=C
-export SOURCE_DATE_EPOCH=1526257770
+export LANG=C.UTF-8
+export SOURCE_DATE_EPOCH=1565219731
+export GCC_IGNORE_WERROR=1
+export AR=gcc-ar
+export RANLIB=gcc-ranlib
+export NM=gcc-nm
+export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FCFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 "
+%configure --disable-static --disable-builddir
 make  %{?_smp_mflags}
 
+%check
+export LANG=C.UTF-8
+export http_proxy=http://127.0.0.1:9/
+export https_proxy=http://127.0.0.1:9/
+export no_proxy=localhost,127.0.0.1,0.0.0.0
+make VERBOSE=1 V=1 %{?_smp_mflags} check || :
+
 %install
-export SOURCE_DATE_EPOCH=1526257770
+export SOURCE_DATE_EPOCH=1565219731
 rm -rf %{buildroot}
+mkdir -p %{buildroot}/usr/share/package-licenses/i3status
+cp LICENSE %{buildroot}/usr/share/package-licenses/i3status/LICENSE
 %make_install
-## make_install_append content
+## install_append content
 install -d -m 755 %{buildroot}/usr/share/xdg/i3status
 install -m 644 i3status.conf %{buildroot}/usr/share/xdg/i3status/config
-## make_install_append end
+## install_append end
 
 %files
 %defattr(-,root,root,-)
@@ -89,6 +119,10 @@ install -m 644 i3status.conf %{buildroot}/usr/share/xdg/i3status/config
 %defattr(-,root,root,-)
 /usr/share/xdg/i3status/config
 
+%files license
+%defattr(0644,root,root,0755)
+/usr/share/package-licenses/i3status/LICENSE
+
 %files man
-%defattr(-,root,root,-)
+%defattr(0644,root,root,0755)
 /usr/share/man/man1/i3status.1
