@@ -6,10 +6,10 @@
 #
 Name     : i3status
 Version  : 2.13
-Release  : 7
+Release  : 8
 URL      : https://i3wm.org/i3status/i3status-2.13.tar.bz2
 Source0  : https://i3wm.org/i3status/i3status-2.13.tar.bz2
-Source1 : https://i3wm.org/i3status/i3status-2.13.tar.bz2.asc
+Source1  : https://i3wm.org/i3status/i3status-2.13.tar.bz2.asc
 Summary  : No detailed summary available
 Group    : Development/Tools
 License  : BSD-3-Clause
@@ -72,20 +72,21 @@ man components for the i3status package.
 
 %prep
 %setup -q -n i3status-2.13
+cd %{_builddir}/i3status-2.13
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1565219731
+export SOURCE_DATE_EPOCH=1604358649
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
 export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FCFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
+export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
 export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 "
 %configure --disable-static --disable-builddir
 make  %{?_smp_mflags}
@@ -98,10 +99,10 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check || :
 
 %install
-export SOURCE_DATE_EPOCH=1565219731
+export SOURCE_DATE_EPOCH=1604358649
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/i3status
-cp LICENSE %{buildroot}/usr/share/package-licenses/i3status/LICENSE
+cp %{_builddir}/i3status-2.13/LICENSE %{buildroot}/usr/share/package-licenses/i3status/4c5f505b4581370b2205371439a5ef00e52f9442
 %make_install
 ## install_append content
 install -d -m 755 %{buildroot}/usr/share/xdg/i3status
@@ -121,7 +122,7 @@ install -m 644 i3status.conf %{buildroot}/usr/share/xdg/i3status/config
 
 %files license
 %defattr(0644,root,root,0755)
-/usr/share/package-licenses/i3status/LICENSE
+/usr/share/package-licenses/i3status/4c5f505b4581370b2205371439a5ef00e52f9442
 
 %files man
 %defattr(0644,root,root,0755)
