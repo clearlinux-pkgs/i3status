@@ -5,11 +5,11 @@
 # Source0 file verified with key 0x4E7160ED4AC8EE1D (michael@stapelberg.de)
 #
 Name     : i3status
-Version  : 2.13
-Release  : 8
-URL      : https://i3wm.org/i3status/i3status-2.13.tar.bz2
-Source0  : https://i3wm.org/i3status/i3status-2.13.tar.bz2
-Source1  : https://i3wm.org/i3status/i3status-2.13.tar.bz2.asc
+Version  : 2.14
+Release  : 9
+URL      : https://i3wm.org/i3status/i3status-2.14.tar.xz
+Source0  : https://i3wm.org/i3status/i3status-2.14.tar.xz
+Source1  : https://i3wm.org/i3status/i3status-2.14.tar.xz.asc
 Summary  : No detailed summary available
 Group    : Development/Tools
 License  : BSD-3-Clause
@@ -17,13 +17,12 @@ Requires: i3status-bin = %{version}-%{release}
 Requires: i3status-data = %{version}-%{release}
 Requires: i3status-license = %{version}-%{release}
 Requires: i3status-man = %{version}-%{release}
-BuildRequires : asciidoc
+BuildRequires : alsa-plugins
+BuildRequires : buildreq-meson
 BuildRequires : libnl-dev
 BuildRequires : pkgconfig(alsa)
 BuildRequires : pkgconfig(libconfuse)
-BuildRequires : pkgconfig(libnl-genl-3.0)
 BuildRequires : pkgconfig(libpulse)
-BuildRequires : xmlto
 BuildRequires : yajl-dev
 
 %description
@@ -71,42 +70,40 @@ man components for the i3status package.
 
 
 %prep
-%setup -q -n i3status-2.13
-cd %{_builddir}/i3status-2.13
+%setup -q -n i3status-2.14
+cd %{_builddir}/i3status-2.14
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1604358649
+export SOURCE_DATE_EPOCH=1647403410
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
-export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
-export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=4 "
-export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=4 "
-%configure --disable-static --disable-builddir
-make  %{?_smp_mflags}
+export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=auto "
+export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=auto "
+export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=auto "
+export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=auto "
+CFLAGS="$CFLAGS" CXXFLAGS="$CXXFLAGS" LDFLAGS="$LDFLAGS" meson --libdir=lib64 --prefix=/usr --buildtype=plain   builddir
+ninja -v -C builddir
 
 %check
 export LANG=C.UTF-8
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-make VERBOSE=1 V=1 %{?_smp_mflags} check || :
+meson test -C builddir --print-errorlogs
 
 %install
-export SOURCE_DATE_EPOCH=1604358649
-rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/i3status
-cp %{_builddir}/i3status-2.13/LICENSE %{buildroot}/usr/share/package-licenses/i3status/4c5f505b4581370b2205371439a5ef00e52f9442
-%make_install
+cp %{_builddir}/i3status-2.14/LICENSE %{buildroot}/usr/share/package-licenses/i3status/4c5f505b4581370b2205371439a5ef00e52f9442
+DESTDIR=%{buildroot} ninja -C builddir install
 ## install_append content
 install -d -m 755 %{buildroot}/usr/share/xdg/i3status
-install -m 644 i3status.conf %{buildroot}/usr/share/xdg/i3status/config
+install -m 644 ./etc/i3status.conf %{buildroot}/usr/share/xdg/i3status/config
 ## install_append end
 
 %files

@@ -1,2 +1,2 @@
 install -d -m 755 %{buildroot}/usr/share/xdg/i3status
-install -m 644 i3status.conf %{buildroot}/usr/share/xdg/i3status/config
+install -m 644 ./etc/i3status.conf %{buildroot}/usr/share/xdg/i3status/config
